@@ -44,7 +44,7 @@ Example Playbook
 ----------------
 
 This role only sets up the awslogs agent. The agent configuration is left up
-to you since it is very simple, but can be very specific to your system.
+to you. This is very simple, but can be very specific to your system.
 
     - hosts: servers
       vars:
