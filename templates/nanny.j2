@@ -11,7 +11,7 @@ then
 fi
 
 {{ awslogs_setup_nanny_ps }} -C -p `{{ awslogs_setup_nanny_cat }} $PIDFILE` | \
-{{ awslogs_setup_nanny_grep }} "{{ awslogs_setup_awslogs_launcher }}" > /dev/null
+{{ awslogs_setup_nanny_grep }} "{{ awslogs_setup_launcher }}" > /dev/null
 RETVAL=$?
 echo
 [ $RETVAL != 0 ] && [ -f $LOCKFILE ] && {{ awslogs_setup_nanny_service }} awslogs restart

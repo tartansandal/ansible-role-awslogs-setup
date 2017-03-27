@@ -19,29 +19,29 @@
     state: directory
     name: "{{ item }}"
   with_items:
-    - "{{ awslogs_home }}"
-    - "{{ awslogs_bin }}"
-    - "{{ awslogs_state }}"
-    - "{{ awslogs_etc }}"
-    - "{{ awslogs_etc }}/config"
+    - "{{ awslogs_setup_home }}"
+    - "{{ awslogs_setup_bin }}"
+    - "{{ awslogs_setup_state }}"
+    - "{{ awslogs_setup_etc }}"
+    - "{{ awslogs_setup_etc }}/config"
 
 - name: ensure AWSLOGS_HOME contains awscli-cwlogs in a virtualenv
   pip:
     name: awscli-cwlogs
     version: 1.4.0
     extra_args: --upgrade
-    virtualenv: "{{ awslogs_home }}"
+    virtualenv: "{{ awslogs_setup_home }}"
 
 - name: ensure aws.conf is configured to use the awslogs plugin
   template:
     src: aws.conf.j2
     mode: 0600
-    dest: "{{ awslogs_etc }}/aws.conf"
+    dest: "{{ awslogs_setup_etc }}/aws.conf"
 
 - name: ensure agent launcher is installed
   template:
     src: launcher.sh.j2
-    dest: "{{ awslogs_launcher }}"
+    dest: "{{ awslogs_setup_launcher }}"
     mode: 0755
 
 - name: ensure agent daemon script is installed
@@ -54,7 +54,7 @@
 - name: ensure agent config file exists
   copy:
     src: awslogs.conf
-    dest: "{{ awslogs_config_file }}"
+    dest: "{{ awslogs_setup_config_file }}"
     force: no
 
 - name: ensure logrotate is configured for the agent
@@ -80,7 +80,7 @@
 - name: ensure the daemon nanny script is installed
   template:
     src: nanny.j2
-    dest: "{{ awslogs_bin }}/awslogs-nanny.sh"
+    dest: "{{ awslogs_setup_bin }}/awslogs-nanny.sh"
     mode: 0755
     #when: ansible_service_mgr != 'systemd'
 
