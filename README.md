@@ -54,7 +54,7 @@ to you. This is very simple, but can be very specific to your system.
         - tartansandal.awslogs-setup
 
       post_tasks:
-        - name: configure awslogs system log files
+        - name: configure awslogs for system log files
           template:
             src: awslogs.conf.j2
             dest: /var/awslogs/etc/awslogs.conf
