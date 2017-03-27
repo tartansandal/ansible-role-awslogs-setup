@@ -1,0 +1,10 @@
+---
+
+# This is needed for aws.conf
+region: ap-southeast-2
+
+# These may need to be overridden for some OSs (not sure which)
+nanny_ps:      /usr/bin/ps
+nanny_cat:     /usr/bin/cat
+nanny_grep:    /usr/bin/grep
+nanny_service: /usr/sbin/service

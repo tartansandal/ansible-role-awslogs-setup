@@ -1,0 +1,17 @@
+#!/bin/sh
+
+PIDFILE={{ awslogs_pid_file }}
+LOCKFILE={{ awslogs_lock_file }}
+
+# Bail out if PID file doesn't exist. It implies that the
+# process was never started.
+if [ ! -f $PIDFILE ]
+then
+    exit 0
+fi
+
+{{ nanny_ps }} -C -p `{{ nanny_cat }} $PIDFILE` | {{ nanny_grep }} "{{ awslogs_launcher }}" > /dev/null
+RETVAL=$?
+echo
+[ $RETVAL != 0 ] && [ -f $LOCKFILE ] && {{ nanny_service }} awslogs restart
+

@@ -1,0 +1,112 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          awslogs
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Daemon for AWSLogs agent.
+# Description:       This script is responsible for running AWSLogs agent
+#                    as a daemon.
+### END INIT INFO
+
+CONFIG_FILE={{ awslogs_config_file }}
+DAEMON={{ awslogs_launcher }}
+DAEMON_NAME=awslogs
+
+DAEMON_USER=root
+PIDFILE={{ awslogs_pid_file }}
+LOCKFILE={{ awslogs_lock_file }}
+MUTEXFILE={{ awslogs_mutex_file }}
+
+START_CMD="start-stop-daemon --start --background --pidfile $PIDFILE --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON"
+STATUS_CMD="status_of_proc -p $PIDFILE "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?"
+
+RETVAL=0
+
+legacy_start() {
+    echo "Starting $DAEMON_NAME daemon"
+    daemon --pidfile $PIDFILE --user=$DAEMON_USER "nohup $DAEMON > /dev/null 2>&1 &"
+}
+
+if [ -e /etc/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+    START_CMD=legacy_start
+    STATUS_CMD="status -p $PIDFILE"
+elif [ -e /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+else
+    echo "Failed to detect LSB compliant init-functions."
+    exit 1
+fi
+
+do_start () {
+    (
+        flock -w 10 -x 9
+        echo "Starting system $DAEMON_NAME daemon"
+        $START_CMD
+        RETVAL=$?
+        touch $LOCKFILE
+    ) 9>$MUTEXFILE
+    rm -f $MUTEXFILE
+}
+
+do_stop () {
+    (
+        flock -w 10 -x 9
+        echo "Stopping system $DAEMON_NAME daemon"
+        ppids=`ps axo pid,comm | grep "awslogs-agent-l" | awk '{print $1}'`
+        for pid in $ppids; do
+            pkill -15 -P $pid > /dev/null 2>&1
+        done
+
+        sleep 3
+        procList=`ps axo pid,comm | grep "awslogs-agent-l"`
+        procsAlive=$?
+        ppids=`${procList} | awk '{print $1}'`
+        if [ $procsAlive = 0 ]; then
+            for pid in $ppids; do
+                pkill -9 -P $pid > /dev/null 2>&1
+            done
+        fi
+
+        procList=`ps axo pid,comm | grep "awslogs-agent-l"`
+        if [ $? != 0 ]; then
+            RETVAL=0
+        else
+            RETVAL=1
+        fi
+
+        rm -f $LOCKFILE
+    ) 9>$MUTEXFILE
+    rm -f $MUTEXFILE
+}
+
+do_restart () {
+    do_stop
+    do_start
+}
+
+case "$1" in
+
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    restart)
+        do_restart
+        ;;
+    status)
+        $STATUS_CMD
+        ;;
+    *)
+        echo "Usage: /etc/init.d/$DAEMON_NAME {start|stop|restart|status}"
+        exit 1
+        ;;
+
+esac
+exit $RETVAL
+

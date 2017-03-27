@@ -1,0 +1,5 @@
+#_nanny!/bin/bash
+MAILTO=""
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+* * * * * root {{ awslogs_bin }}/awslogs-nanny.sh > /dev/null 2>&1

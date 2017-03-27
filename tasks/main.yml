@@ -1,0 +1,91 @@
+---
+
+- name: required packages have been installed with yum
+  yum: name={{ item }} state=present
+  with_items:
+    - python-pip
+    - python-virtualenv
+  when: ansible_pkg_mgr == "yum"
+
+- name: required packages have been installed with apt
+  apt: name={{ item }} state=present
+  with_items:
+    - python-pip
+    - python-virtualenv
+  when: ansible_pkg_mgr == "apt"
+
+- name: ensure awslogs dirs exist
+  file:
+    state: directory
+    name: "{{ item }}"
+  with_items:
+    - "{{ awslogs_home }}"
+    - "{{ awslogs_bin }}"
+    - "{{ awslogs_state }}"
+    - "{{ awslogs_etc }}"
+    - "{{ awslogs_etc }}/config"
+
+- name: ensure AWSLOGS_HOME contains awscli-cwlogs in a virtualenv
+  pip:
+    name: awscli-cwlogs
+    version: 1.4.0
+    extra_args: --upgrade
+    virtualenv: "{{ awslogs_home }}"
+
+- name: ensure aws.conf is configured to use the awslogs plugin
+  template:
+    src: aws.conf.j2
+    mode: 0600
+    dest: "{{ awslogs_etc }}/aws.conf"
+
+- name: ensure agent launcher is installed
+  template:
+    src: launcher.sh.j2
+    dest: "{{ awslogs_launcher }}"
+    mode: 0755
+
+- name: ensure agent daemon script is installed
+  template:
+    src: daemon.j2
+    dest: /etc/init.d/awslogs
+    mode: 0755
+    #when: ansible_service_mgr != 'systemd'
+
+- name: ensure agent config file exists
+  copy:
+    src: awslogs.conf
+    dest: "{{ awslogs_config_file }}"
+    force: no
+
+- name: ensure logrotate is configured for the agent
+  template:
+    src:  logrotate_config.j2
+    dest: /etc/logrotate.d/awslogs
+    mode: 0644
+
+- name: ensure there is a cron job to regularly rotate agent logs
+  copy:
+    src:  logrotate_cron
+    dest: /etc/cron.d/awslogs_log_rotate
+    mode: 0644
+
+- name: enable the agent daemon
+  service:
+    name: awslogs
+    enabled: yes
+    state: started
+
+# not needed if we setup a systemd daemon
+# ansible_service_mgr == "systemd"
+- name: ensure the daemon nanny script is installed
+  template:
+    src: nanny.j2
+    dest: "{{ awslogs_bin }}/awslogs-nanny.sh"
+    mode: 0755
+    #when: ansible_service_mgr != 'systemd'
+
+- name: ensure there is a cron job to regualry trigger the nanny script
+  template:
+    src:  nanny_cron.j2
+    dest: /etc/cron.d/awslogs_nanny
+    #when: ansible_service_mgr != 'systemd'
