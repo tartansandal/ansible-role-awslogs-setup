@@ -1,38 +1,83 @@
-Role Name
+awslogs-setup
 =========
 
-A brief description of the role goes here.
+Set up the AWS CloudWatch Logs Agent from scratch.
+
+Unlike similar roles, this does not call the awslogs-agent-setup.py script.
+Instead, that script has been decomposed into a set of files, templates and
+ansible tasks which can be run to achieve the same (non-interactive) results.
+
+This allows us to clearly separate the agent setup from the agent
+configuration.  The latter will be very specific to your system and should
+probably be handled by a separate role that has awslogs-setup as a dependency
+(see below).
+
+A copy of the original awslogs-agent-setup.py script is provided in the `/src`
+directory for reference.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+For use with EC2 linux instances running on AWS.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+You will probably need to set the AWS region that will be used by the
+installed aws-cli. This defaults to:
 
-Dependencies
-------------
+    region: ap-southeast-2
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The setup installs an agent daemon "nanny" script that tries to ensure that
+the agent is always running.  This requires a couple of paths to system
+commands to be specified. The following defaults should work on most modern
+systems:
+
+    nanny_ps:      /usr/bin/ps
+    nanny_cat:     /usr/bin/cat
+    nanny_grep:    /usr/bin/grep
+    nanny_service: /usr/sbin/service
+
+If you have quirky (or old) system, however, these can be overridden.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+This role only sets up the awslogs agent. The agent configuration is left up
+to you since it is very simple, but can be very specific to your system.
 
     - hosts: servers
+      vars:
+        region: us-east-1   # or set via inventory
+
       roles:
-         - { role: username.rolename, x: 42 }
+        - tartansandal.awslogs-setup
+
+      post_tasks
+        - name: configure awslogs system log files
+          template:
+            src: awslogs.conf.j2
+            dest: /var/awslogs/etc/awslogs.conf
+
+        # use the /var/awslogs/etc/config/ directory for service specific logs
+        - name: configure awslogs for nginx log files
+          template:
+            src: nginx-awslogs.conf.j2
+            dest: /var/awslogs/etc/config/nginx.conf
+
+The `post_tasks` shown above could be factored out into separate roles that have
+`awslogs-setup` as a dependency.
+
+See http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/AgentReference.html
+for details on configuring the agent
+
+ToDo
+----
+
+1. Create a systemd configuration to manage the laucher script.
 
 License
 -------
 
 BSD
 
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
