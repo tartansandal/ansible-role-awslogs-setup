@@ -3,28 +3,28 @@ awslogs-setup
 
 Set up the AWS CloudWatch Logs Agent from scratch.
 
-Unlike similar roles, this does not call the awslogs-agent-setup.py script.
+Unlike similar roles, this does not call the `awslogs-agent-setup.py` script.
 Instead, that script has been decomposed into a set of files, templates and
 ansible tasks which can be run to achieve the same (non-interactive) results.
 
 This allows us to clearly separate the agent setup from the agent
 configuration.  The latter will be very specific to your system and should
-probably be handled by a separate role that has awslogs-setup as a dependency
+probably be handled by a separate role that has `awslogs-setup` as a dependency
 (see below).
 
-A copy of the original awslogs-agent-setup.py script is provided in the `/src`
+A copy of the original `awslogs-agent-setup.py script` is provided in the `/src`
 directory for reference.
 
 Requirements
 ------------
 
-For use with EC2 linux instances running on AWS.
+For use with EC2 Linux instances running on AWS.
 
 Role Variables
 --------------
 
 You will probably need to set the AWS region that will be used by the
-installed aws-cli. This defaults to:
+installed `aws-cli`. This defaults to:
 
     region: ap-southeast-2
 
@@ -74,7 +74,7 @@ for details on configuring the agent
 ToDo
 ----
 
-1. Create a systemd configuration to manage the laucher script.
+1. Create a systemd configuration to manage the launcher script.
 
 License
 -------
