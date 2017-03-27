@@ -53,17 +53,23 @@ to you. This is very simple, but can be very specific to your system.
       roles:
         - tartansandal.awslogs-setup
 
+      handlers:
+        - name: restart awslogs
+          service: awslogs state=restarted
+
       post_tasks:
         - name: configure awslogs for system log files
           template:
             src: awslogs.conf.j2
             dest: /var/awslogs/etc/awslogs.conf
+          notify: restart awslogs
 
         # use the /var/awslogs/etc/config/ directory for service specific configs
         - name: configure awslogs for nginx log files
           template:
             src: nginx-awslogs.conf.j2
             dest: /var/awslogs/etc/config/nginx.conf
+          notify: restart awslogs
 
 The `post_tasks` shown above could be factored out into separate roles that have
 `awslogs-setup` as a dependency.
