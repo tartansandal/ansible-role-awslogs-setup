@@ -11,14 +11,14 @@
 #                    as a daemon.
 ### END INIT INFO
 
-CONFIG_FILE={{ awslogs_config_file }}
-DAEMON={{ awslogs_launcher }}
+CONFIG_FILE={{ awslogs_setup_config_file }}
+DAEMON={{ awslogs_setup_launcher }}
 DAEMON_NAME=awslogs
 
 DAEMON_USER=root
-PIDFILE={{ awslogs_pid_file }}
-LOCKFILE={{ awslogs_lock_file }}
-MUTEXFILE={{ awslogs_mutex_file }}
+PIDFILE={{ awslogs_setup_pid_file }}
+LOCKFILE={{ awslogs_setup_lock_file }}
+MUTEXFILE={{ awslogs_setup_mutex_file }}
 
 START_CMD="start-stop-daemon --start --background --pidfile $PIDFILE --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON"
 STATUS_CMD="status_of_proc -p $PIDFILE "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?"

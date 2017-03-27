@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PIDFILE={{ awslogs_pid_file }}
-LOCKFILE={{ awslogs_lock_file }}
+PIDFILE={{ awslogs_setup_pid_file }}
+LOCKFILE={{ awslogs_setup_lock_file }}
 
 # Bail out if PID file doesn't exist. It implies that the
 # process was never started.
@@ -10,8 +10,9 @@ then
     exit 0
 fi
 
-{{ nanny_ps }} -C -p `{{ nanny_cat }} $PIDFILE` | {{ nanny_grep }} "{{ awslogs_launcher }}" > /dev/null
+{{ awslogs_setup_nanny_ps }} -C -p `{{ awslogs_setup_nanny_cat }} $PIDFILE` | \
+{{ awslogs_setup_nanny_grep }} "{{ awslogs_setup_awslogs_launcher }}" > /dev/null
 RETVAL=$?
 echo
-[ $RETVAL != 0 ] && [ -f $LOCKFILE ] && {{ nanny_service }} awslogs restart
+[ $RETVAL != 0 ] && [ -f $LOCKFILE ] && {{ awslogs_setup_nanny_service }} awslogs restart
 

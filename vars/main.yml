@@ -1,15 +1,15 @@
 ---
 
 # Target directories
-awslogs_home:        /var/awslogs
-awslogs_bin:         "{{ awslogs_home }}/bin"
-awslogs_state:       "{{ awslogs_home }}/state"
-awslogs_etc:         "{{ awslogs_home }}/etc"
+awslogs_setup_home:        /var/awslogs
+awslogs_setup_bin:         "{{ awslogs_setup_home }}/bin"
+awslogs_setup_state:       "{{ awslogs_setup_home }}/state"
+awslogs_setup_etc:         "{{ awslogs_setup_home }}/etc"
 
 # These are needed by daemon and launcher scripts
-awslogs_launcher:    "{{ awslogs_bin }}/awslogs-agent-launcher.sh"
-awslogs_config_file: "{{ awslogs_etc }}/awslogs.conf"
-awslogs_lock_file:   "{{ awslogs_state }}/awslogs.lock"
-awslogs_mutex_file:  "{{ awslogs_state }}/awslogs.mutex"
-awslogs_pid_file:    "{{ awslogs_state }}/awslogs.pid"
+awslogs_setup_launcher:    "{{ awslogs_setup_bin }}/awslogs-agent-launcher.sh"
+awslogs_setup_config_file: "{{ awslogs_setup_etc }}/awslogs.conf"
+awslogs_setup_lock_file:   "{{ awslogs_setup_state }}/awslogs.lock"
+awslogs_setup_mutex_file:  "{{ awslogs_setup_state }}/awslogs.mutex"
+awslogs_setup_pid_file:    "{{ awslogs_setup_state }}/awslogs.pid"
 

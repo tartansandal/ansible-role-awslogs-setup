@@ -26,17 +26,17 @@ Role Variables
 You will probably need to set the AWS region that will be used by the
 installed `aws-cli`. This defaults to:
 
-    region: ap-southeast-2
+    awslogs_setup_region: ap-southeast-2
 
 The setup installs an agent daemon "nanny" script that tries to ensure that
 the agent is always running.  This requires a couple of paths to system
 commands to be specified. The following defaults should work on most modern
 systems:
 
-    nanny_ps:      /usr/bin/ps
-    nanny_cat:     /usr/bin/cat
-    nanny_grep:    /usr/bin/grep
-    nanny_service: /usr/sbin/service
+    awslogs_setup_nanny_ps:      /usr/bin/ps
+    awslogs_setup_nanny_cat:     /usr/bin/cat
+    awslogs_setup_nanny_grep:    /usr/bin/grep
+    awslogs_setup_nanny_service: /usr/sbin/service
 
 If you have quirky (or old) system, however, these can be overridden.
 
@@ -48,7 +48,7 @@ to you. This is very simple, but can be very specific to your system.
 
     - hosts: servers
       vars:
-        region: us-east-1   # or set via inventory
+        awslogs_setup_region: us-east-1   # or set via inventory
 
       roles:
         - tartansandal.awslogs-setup
@@ -59,7 +59,7 @@ to you. This is very simple, but can be very specific to your system.
             src: awslogs.conf.j2
             dest: /var/awslogs/etc/awslogs.conf
 
-        # use the /var/awslogs/etc/config/ directory for service specific logs
+        # use the /var/awslogs/etc/config/ directory for service specific configs
         - name: configure awslogs for nginx log files
           template:
             src: nginx-awslogs.conf.j2

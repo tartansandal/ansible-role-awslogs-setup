@@ -1,12 +1,12 @@
 #!/bin/sh
 
-echo -n $$ > {{ awslogs_pid_file }}
+echo -n $$ > {{ awslogs_setup_pid_file }}
 
 /usr/bin/env -i                                           \
     HOME=/root                                            \
-    AWS_CONFIG_FILE={{ awslogs_etc }}/aws.conf            \
-    /bin/nice -n 4 {{ awslogs_bin }}/aws logs push        \
-        --config-file {{ awslogs_config_file }}           \
-        --additional-configs-dir {{ awslogs_etc }}/config \
+    AWS_CONFIG_FILE={{ awslogs_setup_etc }}/aws.conf            \
+    /bin/nice -n 4 {{ awslogs_setup_bin }}/aws logs push        \
+        --config-file {{ awslogs_setup_config_file }}           \
+        --additional-configs-dir {{ awslogs_setup_etc }}/config \
     >> /var/log/awslogs.log 2>&1
 
