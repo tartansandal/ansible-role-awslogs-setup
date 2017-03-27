@@ -53,7 +53,7 @@ to you. This is very simple, but can be very specific to your system.
       roles:
         - tartansandal.awslogs-setup
 
-      post_tasks
+      post_tasks:
         - name: configure awslogs system log files
           template:
             src: awslogs.conf.j2
