@@ -84,7 +84,7 @@
     mode: 0755
     #when: ansible_service_mgr != 'systemd'
 
-- name: ensure there is a cron job to regualry trigger the nanny script
+- name: ensure there is a cron job to regularly trigger the nanny script
   template:
     src:  nanny_cron.j2
     dest: /etc/cron.d/awslogs_nanny
