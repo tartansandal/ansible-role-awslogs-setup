@@ -32,6 +32,9 @@
     extra_args: --upgrade
     virtualenv: "{{ awslogs_setup_home }}"
 
+- name: let filessytem settle after install
+  pause: seconds=1
+
 - name: ensure aws.conf is configured to use the awslogs plugin
   template:
     src: aws.conf.j2
