@@ -4,6 +4,7 @@
 awslogs_setup_region: ap-southeast-2
 
 # These may need to be overridden for some OSs (not sure which)
+awslogs_setup_launcher_nice: /usr/bin/nice
 awslogs_setup_nanny_ps:      /usr/bin/ps
 awslogs_setup_nanny_cat:     /usr/bin/cat
 awslogs_setup_nanny_grep:    /usr/bin/grep

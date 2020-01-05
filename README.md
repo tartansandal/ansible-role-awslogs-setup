@@ -28,11 +28,11 @@ installed `aws-cli`. This defaults to:
 
     awslogs_setup_region: ap-southeast-2
 
-The setup installs an agent daemon "nanny" script that tries to ensure that
-the agent is always running.  This requires a couple of paths to system
-commands to be specified. The following defaults should work on most modern
-systems:
+The setup installs a "launcher" script and an agent daemon "nanny" script that tries to
+ensure that the agent is always running.  These requires a couple of paths to system
+commands to be specified. The following defaults should work on most modern systems:
 
+    awslogs_setup_launcher_nice: /usr/bin/nice
     awslogs_setup_nanny_ps:      /usr/bin/ps
     awslogs_setup_nanny_cat:     /usr/bin/cat
     awslogs_setup_nanny_grep:    /usr/bin/grep

@@ -5,8 +5,7 @@ echo -n $$ > {{ awslogs_setup_pid_file }}
 /usr/bin/env -i                                           \
     HOME=/root                                            \
     AWS_CONFIG_FILE={{ awslogs_setup_etc }}/aws.conf            \
-    /bin/nice -n 4 {{ awslogs_setup_bin }}/aws logs push        \
+    {{ awslogs_setup_launcher_nice }} -n 4 {{ awslogs_setup_bin }}/aws logs push        \
         --config-file {{ awslogs_setup_config_file }}           \
         --additional-configs-dir {{ awslogs_setup_etc }}/config \
     >> /var/log/awslogs.log 2>&1
-
